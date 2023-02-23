@@ -236,8 +236,8 @@ void PROJECT::launch_check_2G(){//Launch Confirmation Condition No.1 timer, call
 	}
 	if(LaunchCount >= 20){
 		average0 = sum0 / 20; average1 = sum1 / 20; average2 = sum2 / 20;
-		if(countup < 50){
-			if(average0*average0 + average1*average1 + average2*average2 > /*32767*32767/ 64*/100){/*change true =64, experiment = 240*/
+		if(countup < 4 /*50*/){
+			if(average0*average0 + average1*average1 + average2*average2 > 32767*32767/ 64){/*change true =64, experiment = 240*/
 				countup++;
 			}else{
 				countup = 0;
@@ -245,7 +245,7 @@ void PROJECT::launch_check_2G(){//Launch Confirmation Condition No.1 timer, call
 		  	LaunchCount = 0;
 		  	sum0 = 0,sum1 = 0,sum2 = 0;
 		}
-		if(countup >= 50){/*change true = 50, experiment = 10 */ //detection complete
+		if(countup >= 4 /*50*/){/*change true = 50, experiment = 10 */ //detection complete
 			launched = 1;
 			t_launch = counter - 100000; //set the launch time to 1 second ago
 			for(uint8_t i = 0; i < 4; i++)
@@ -259,19 +259,24 @@ void PROJECT::launch_check_2G(){//Launch Confirmation Condition No.1 timer, call
 
 
 void PROJECT::launch_check_P(){ //launch confirmation condition No.2 pressure, call cycle 20ms
+	uint8_t LPS25_data[3];
+	lps.Get(LPS25_data);
+	uint32_t Pressure = (LPS25_data[0]+LPS25_data[1]*256+LPS25_data[2]*65536)*100/4096;
 	sum_Pressure += Pressure;
 	sum_Pressure_count ++;
-	if(sum_Pressure_count >= 5){/*change true = 5, experiment = 20*/
-		ave_Pressure_old = ave_Pressure;
-		ave_Pressure = sum_Pressure / sum_Pressure_count;
+	if(sum_Pressure_count >= 10){/*change true = 5, experiment = 20*/
+		ave_Pressure_old = ave_Pressure ;
+		ave_Pressure = sum_Pressure * 10 / sum_Pressure_count;
+		Serial2.print("ave_Pressure * 10 = ");
+		Serial2.println(ave_Pressure);
 		sum_Pressure = 0; sum_Pressure_count = 0;
-		if((ave_Pressure_old - ave_Pressure) > 10){ /*change true = 10, experiment = 0.5*/ //0.1hPa over
+		if((ave_Pressure_old - ave_Pressure) > 5){ /*change true = 10, experiment = 0.5*/ //0.1hPa over
 			difference_Pressure_count++;
 		} else {
 			difference_Pressure_count = 0;
 		}
 	}
-	if(difference_Pressure_count >= 10){/*change true = 10, experiment = 3*/ //detection complete
+	if(difference_Pressure_count >= 5){/*change true = 10, experiment = 3*/ //detection complete
 		launched = 1;
 		t_launch = counter - 100000; //set the launch time to 1 second ago
 		sum_Pressure = 0; sum_Pressure_count = 0; difference_Pressure_count = 0;
@@ -294,11 +299,15 @@ void PROJECT::vertex_check_t(){
 }
 
 void PROJECT::vertex_check_P(){ //vertex confirmation condition No.2 pressure, call cycle 20ms
+	uint8_t LPS25_data[3];
+	lps.Get(LPS25_data);
+	uint32_t Pressure = (LPS25_data[0]+LPS25_data[1]*256+LPS25_data[2]*65536)*100/4096;
 	sum_Pressure += Pressure;
 	sum_Pressure_count ++;
-	if(sum_Pressure_count >= 5){/*change true = 5, experiment = 20*/
+	if(sum_Pressure_count >= 10){/*change true = 5, experiment = 20*/
 		ave_Pressure_old = ave_Pressure;
-		ave_Pressure = sum_Pressure / sum_Pressure_count;
+		ave_Pressure = sum_Pressure * 10 / sum_Pressure_count;
+		Serial2.print("Hello, world!");
 		sum_Pressure = 0; sum_Pressure_count = 0;
 		if(ave_Pressure > ave_Pressure_old){ //if this barometric pressure value is higher than the previous value.
 			difference_Pressure_count++;

@@ -12,7 +12,7 @@ void setup()
   delay(1000);
   Serial.begin(9600);
   Serial2.begin(9600, SERIAL_8N1, RX_PIN, TX_PIN);
-  Serial2.print("Hello, world!");
+  //Serial2.print("Hello, world!");
   while(!Serial2.availableForWrite());
   SPIC1.begin(VSPI, SCK1, MISO1, MOSI1);
   lps.begin(&SPIC1, LPSCS, 6000000);
@@ -26,7 +26,7 @@ void setup()
   timerAlarmWrite(timer, 1000, true); // 1us * 1e5 = 10ms -> 100Hz
   timerAlarmEnable(timer);
   //project.flasherase();
-  Serial2.print("Hello, world!");
+  //Serial2.print("Hello, world!");
   //put your setup code here, to run once:
 }
 
@@ -39,14 +39,13 @@ void loop() {
 		//Serial2.print(flag_40);
 		counter++;
 		//Serial2.print(counter);
-		//Serial2.print(micros());//to check time to finish a cycle of "loop function".
+		//Serial2.println(micros());//to check time to finish a cycle of "loop function".
 		count_lps++;
 		if(mode == 2){
 			//time = micros();
 			//project.flashwrite();//write data to SPIFlash
 			if(k == 16){ //if 1 page is filled
 				project.flashwrite();//write data to SPIFlash
-				//Serial2.print("flashwrite");
 				addr += 0x100; k = 0; num_used_pages++;
 				//if(num_used_pages == num_use_pages){ //if data is filled
 				//Serial2.print('z'); //about 17min10
@@ -55,14 +54,15 @@ void loop() {
 
 			if(flag > 0){ //ICM20948 logging, 1ms
 				icm.Get(ICM_data);
-				// Serial.print(ICM_data[0]);
-				// Serial.print(",");
-				// Serial.print(ICM_data[1]);
-				// Serial.print(",");
-				// Serial.print(ICM_data[2]);
-				// Serial.print(",");
-				uint32_t c = (ICM_data[2])*16 / 32767;
-				//Serial2.print(c);
+				uint32_t a = ICM_data[0] * 16 / 32767;
+				uint32_t b = ICM_data[1] * 16 / 32767;	
+				uint32_t c = ICM_data[2] * 16 / 32767;
+				// Serial2.print(a);
+				// Serial2.print(",");
+				// Serial2.print(b);
+				// Serial2.print(",");
+				// Serial2.print(c);
+				//Serial2.print(",");
 				// Serial.print(ICM_data[3]);
 				// Serial.print(",");
 				// Serial.print(ICM_data[4]);
@@ -74,23 +74,24 @@ void loop() {
 					project.launch_check_2G(); //launch check by ICM
 				}
 				if(launched == 1){
-					if(descent == 0){
-						project.vertex_check_t();//vertex check by timer        				}
-						if(descent ==1){
-							myservo.write(0);
-							servo_status = 1; //90 degree rotation
-							//Serial2.print('x');
-							descent = 2;
-						}
-						if(descent == 2){
-							project.vertex1_check_t();//second vertex check by timer
-							if(descent1 == 1){
-								myservo1.write(0);
-								servo1_status = 1;
-								//Serial2.print("x1");
-							}
-						}		
-					}
+					//Serial2.print("Hello, world!!");
+					// if(descent == 0){
+					// 	project.vertex_check_t();//vertex check by timer        				}
+					// 	if(descent ==1){
+					// 		myservo.write(90);
+					// 		servo_status = 1; //90 degree rotation
+					// 		//Serial2.print('x');
+					// 		descent = 2;
+					// 	}
+					// 	if(descent == 2){
+					// 		project.vertex1_check_t();//second vertex check by timer
+					// 		if(descent1 == 1){
+					// 			myservo1.write(0);
+					// 			servo1_status = 1;
+					// 			//Serial2.print("x1");
+					// 		}
+					// 	}		
+				    //}
 				}
 			flag = 0;
 			}
@@ -106,16 +107,18 @@ void loop() {
 				// Serial.print(LPS25_data[2]);
 				// Serial.print(",");
 				uint32_t Pressure = (LPS25_data[0]+LPS25_data[1]*256+LPS25_data[2]*65536)*100/4096;
-				// //Serial2.print(x);
+				//Serial2.println(Pressure);
 				l++;
 				project.convert_LPS25HB_buf(l);
 				if(launched == 0){ 
 					project.launch_check_P(); //launch check by LPS
 				}
 				if(launched == 1){
+					Serial2.print("launched = 1");
 					if(descent == 0){
 						project.vertex_check_P(); //vertex check by LPS
 					}else if(descent == 1){
+						Serial2.print("descent = 1");
 						myservo.write(90);
 						servo_status = 1; //90 degree rotation
 						//Serial2.print('x');
@@ -124,9 +127,10 @@ void loop() {
 				}
 			flag_40 = 0;			
 			}
-			triger = 0;
+			//triger = 0;
 			//Serial2.print(time);
 		}
+	triger = 0;
 	}
 
 	if(Serial2.available()){ //if data comes from uart2
@@ -199,9 +203,9 @@ void loop() {
 					flag_40 = 0;
 	  				Serial2.print('l');
 					Serial2.print("mode = 2");	
-					digitalWrite(LED,HIGH);
-					delay(1000);
-					digitalWrite(LED,LOW);
+					// digitalWrite(LED,HIGH);
+					// delay(1000);
+					// digitalWrite(LED,LOW);
 					break;
 				case 'r':
 					mode = 4;
