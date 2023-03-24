@@ -32,6 +32,7 @@
 	uint32_t t_open = 14, t_open1 = 16;
 	uint32_t t_openwait = 0;
 	uint8_t servo_status = 0, servo1_status = 0;
+	uint8_t snumber = 0,tnumber = 0, bnumber = 0, onumber = 0, cnumber = 0,pnumber = 0, lnumber = 0, dnumber = 0;
 	uint8_t LaunchCount =0, count = 0, countup = 0;
 	int16_t average0 =0, average1 = 0, average2 = 0;
 	int32_t sum0 = 0, sum1 = 0, sum2=0;
@@ -60,8 +61,10 @@ public:
 	void flasherase();
 	void flashwrite();
 	void data_debug_print();
+	void numberreset();
 	IRAM_ATTR void test();
 	IRAM_ATTR void tack();
+
 
     unsigned long Gettime_record()
   	{
@@ -344,8 +347,11 @@ difference_Pressure_count = 0; sum_Pressure_count = 0; sum_Pressure = 0;
 ave_Pressure = 0; ave_Pressure_old = 0;
 }
 
-IRAM_ATTR void PROJECT:: test()
-{
+void PROJECT::numberreset(){
+	snumber = 0;tnumber = 0; bnumber = 0; onumber = 0; cnumber = 0; pnumber = 0; lnumber = 0; dnumber = 0;
+}
+
+IRAM_ATTR void PROJECT:: test(){
   digitalWrite(LED, HIGH);
   digitalWrite(LED, LOW);
 }

@@ -34,11 +34,8 @@ void loop() {
 	char uartData[1];
 	if (triger != 0){
 		flag++;
-		//Serial2.print(flag);
 		flag_40++;
-		//Serial2.print(flag_40);
 		counter++;
-		//Serial2.print(counter);
 		//Serial2.println(micros());//to check time to finish a cycle of "loop function".
 		count_lps++;
 		if(mode == 2){
@@ -127,8 +124,6 @@ void loop() {
 				}
 			flag_40 = 0;			
 			}
-			//triger = 0;
-			//Serial2.print(time);
 		}
 	triger = 0;
 	}
@@ -137,21 +132,29 @@ void loop() {
 		uartData[0] = Serial2.read();
 
 		if(uartData[0] == 's'){
+			project.numberreset();
 			mode = 0;
+			snumber = 1;
 			Serial2.print('s');
 		}
 
 		if(mode == 0){ //default mode //for rotation of servo during rocket assembly
 			if(uartData[0] == 'p'){
+				project.numberreset();
 				mode = 1;
+				pnumber = 1;
 				Serial2.print('p');
 				Serial2.print("mode = 1");
 				digitalWrite(LED,HIGH);
 				delay(1000);
 				digitalWrite(LED,LOW);
 			}else if(uartData[0] == 't'){
+				project.numberreset();
+				tnumber = 1;
 				top = 1;
 			}else if(uartData[0] == 'b'){
+				project.numberreset();
+				bnumber = 1;
 				bottom = 1;
 			}else if(uartData[0] == 'u'){
 				digitalWrite(LED,HIGH);
@@ -160,12 +163,16 @@ void loop() {
 			}
 			if(top == 1){
 				if(uartData[0] == 'c'){
+					project.numberreset();
+					cnumber = 1;
 					Serial2.print('c');
 					myservo.write(55); //open
   					servo_status = 1;
 					pinMode(SERVO_PIN,LOW);
 					top = 0;
 				}else if(uartData[0] == 'o'){
+					project.numberreset();
+					onumber = 1;
 					Serial2.print('o');
 					myservo.write(0); //close
 					servo_status = 0;
@@ -176,6 +183,8 @@ void loop() {
 			}
 			if(bottom == 1){
 				if(uartData[0] == 'c'){
+					project.numberreset();
+					cnumber = 1;
 					Serial2.print('c');
 					myservo1.write(60); //open
        				servo1_status = 1;
@@ -183,6 +192,8 @@ void loop() {
 					pinMode(SERVO1_PIN,LOW);
 					bottom = 0;
 				}else if(uartData[0] == 'o'){
+					project.numberreset();
+					onumber = 1;
 					Serial2.print('o');
 					myservo1.write(0); //close
 					delay(1000);
@@ -193,12 +204,16 @@ void loop() {
 		}else if (mode == 1){ //preparation mode
 			switch(uartData[0]){
 				case 'd':
+					project.numberreset();
 					mode = 3;
+					dnumber = 1;
 					Serial2.print('d');
 					Serial2.print("mode = 3");
 					break;
 				case 'l':
+					project.numberreset();
 	  				mode = 2;
+					lnumber = 1;
 					flag = 0;
 					flag_40 = 0;
 	  				Serial2.print('l');
@@ -234,6 +249,38 @@ void loop() {
 		// else if(mode == 4){
 		// 	project.flashread();
 		// }
+	}
+
+	if(snumber == 1){
+		Serial2.print('s');
+	}
+
+	if(tnumber == 1){
+		Serial2.print('t');
+	}
+
+	if(bnumber == 1){
+		Serial2.print('b');
+	}
+
+	if(onumber == 1){
+		Serial2.print('o');
+	}
+
+	if(cnumber == 1){
+		Serial2.print('c');
+	}
+
+	if(pnumber == 1){
+		Serial2.print('p');
+	}
+
+	if(lnumber == 1){
+		Serial2.print('l');
+	}
+
+	if(dnumber == 1){
+		Serial2.print('d');
 	}
   // if (Serial2.available()){
 
