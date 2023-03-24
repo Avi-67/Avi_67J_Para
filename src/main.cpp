@@ -226,8 +226,6 @@ void loop() {
 					mode = 4;
 					Serial2.print("mode = 4");
 				default:
-					// mode = 0;
-					// Serial.print("mode = 0");
 					break;
 			}
 		}else if(mode == 3){ //delete mode
